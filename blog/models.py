@@ -1,23 +1,40 @@
+# blog/models.py
+
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.contrib.auth.models import User
+
+
+class CustomUser(AbstractUser):
+    """Custom user model extending the default AbstractUser."""
+    pass
+
 
 class Post(models.Model):
+    """Model representing a blog post."""
     title = models.CharField(max_length=200)
     content = models.TextField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     published_date = models.DateTimeField(auto_now_add=True)
-    likes = models.ManyToManyField(User, related_name='liked_posts')
-    def like_count(self):
-        return self.likes.count()
+    likes = models.ManyToManyField(CustomUser, related_name='liked_posts', blank=True)
+
+    class Meta:
+        """Meta options for Post model."""
+        ordering = ['-published_date']  # Default ordering by published_date in descending order
 
     def __str__(self):
         return self.title
 
+
 class Comment(models.Model):
-    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
-    author = models.CharField(max_length=100)
+    """Model representing a comment on a blog post."""
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     text = models.TextField()
     created_date = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        """Meta options for Comment model."""
+        ordering = ['created_date']  # Default ordering by created_date in ascending order
+
     def __str__(self):
-        return f'Comment by {self.author}'
+        return f'Comment by {self.author} on {self.post}'

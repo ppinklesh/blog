@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-g+-3*2w8l(lb32q#uya@tgv)4d(r4ga*l+eb+v2xr(ilc-cci%'
+SECRET_KEY = 'django-insecure-isvf14x5^da1^qs!oc6*8b&od=%)grblyw2$n7zpkbk_ia-6n&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,18 +42,21 @@ INSTALLED_APPS = [
     'blog',
 ]
 
-# REST Framework settings
+AUTH_USER_MODEL = 'blog.CustomUser'
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
 
-REST_FRAMEWORK['DEFAULT_PAGINATION_CLASS'] = 'rest_framework.pagination.PageNumberPagination'
-REST_FRAMEWORK['PAGE_SIZE'] = 10
+from datetime import timedelta
 
-# Configure Django to use the custom User model
-AUTH_USER_MODEL = 'auth.User'
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
